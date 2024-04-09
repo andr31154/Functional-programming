@@ -55,17 +55,12 @@ void init_float(void *data1, void *data2)
 	int n2 = (*(number_t *)((*list).data +
 			 (*list).len * (*list).elem_size)).fractional_part;
 	char *s = (char *)calloc(50, 1);
-	char *s1 = (char *)calloc(50, 1);
 
 	/* gets the string of a number */
-	sprintf(s, "%d", n1);
-	strcat(s, ".");
-	sprintf(s1, "%d", n2);
-	strcat(s, s1);
+	sprintf(s, "%d.%d", n1, n2);
 	(*(number_t *)((*list).data +
 	(*list).len * (*list).elem_size)).string = strdup(s);
 	free(s);
-	free(s1);
 	(*list).len++;
 	(void)data2;
 }

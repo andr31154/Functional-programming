@@ -23,7 +23,9 @@ array_t map(void (*func)(void *, void *),
 	for (int i = 0; i < list.len; ++i)
 		func(new_list.data + i * new_list.elem_size,
 			 list.data + i * list.elem_size);
-	for_each(list.destructor, list);
+
+	if (list.destructor)
+		for_each(list.destructor, list);
 	free(list.data);
 	return new_list;
 }
@@ -40,12 +42,17 @@ array_t filter(boolean(*func)(void *), array_t list)
 	new_list.len = cnt;
 	new_list.data = calloc(cnt, list.elem_size);
 	int j = 0;
-	for (int i = 0; i < list.len; ++i)
+	for (int i = 0; i < list.len; ++i) {
 		if (func(list.data + i * list.elem_size)) {
 			memcpy(new_list.data + j * list.elem_size,
 			       list.data + i * list.elem_size, list.elem_size);
 			j++;
+		} else {
+			if (list.destructor)
+				list.destructor(list.data + i * list.elem_size);
 		}
+	}
+
 	free(list.data);
 	return new_list;
 }
